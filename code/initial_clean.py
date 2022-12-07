@@ -21,6 +21,19 @@ cols_to_drop = [
 ]
 
 
+################################################################################
+##                                   FUNÇÕES                                  ##
+################################################################################
+
+def contar_colunas(dataframe):
+    """
+    Conta e printa o número de colunas da base de dados.
+    """
+
+    print(f"Existem {len(dataframe.columns.values)} colunas neste dataset.\n")
+
+    return None
+
 
 ################################################################################
 ##                              CARREGANDO DADOS                              ##
