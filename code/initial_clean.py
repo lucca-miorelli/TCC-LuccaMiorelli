@@ -22,3 +22,27 @@ df = pd.read_excel(
 )
 
 print(df.head())
+
+
+################################################################################
+##                              LIMPEZA DOS DADOS                             ##
+################################################################################
+
+# VISÃO GERAL DOS DADOS BRUTOS
+# número de colunas
+# informação das colunas
+# descrever colunas
+
+
+# REMOVER COLUNAS NÃO UTILIZADAS
+
+
+# RENOMEAR COLUNAS
+
+
+# CORRIGIR TYPES DAS COLUNAS
+#
+# tempo para minutos
+
+
+# PREENCHER VALORES NULOS
