@@ -45,7 +45,7 @@ df = pd.read_excel(
     skiprows=range(1, 4)
 )
 
-print(df.head())
+print(f"{df.head()}\n")
 
 
 ################################################################################
@@ -53,13 +53,24 @@ print(df.head())
 ################################################################################
 
 # VISÃO GERAL DOS DADOS BRUTOS
+
 # número de colunas
+contar_colunas(df)
+
 # informação das colunas
-# descrever colunas
+print(f"Informações das colunas:\n")
+# print(df.info())
+
+# descrever colunas numéricas
 
 
 # REMOVER COLUNAS NÃO UTILIZADAS
-
+print("Removendo colunas desnecessárias...")
+df.drop(
+    columns=cols_to_drop,
+    inplace=True
+)
+contar_colunas(df)
 
 # RENOMEAR COLUNAS
 
