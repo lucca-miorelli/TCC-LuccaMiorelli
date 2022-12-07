@@ -10,6 +10,16 @@ import csv
 
 RAW_DATA_PATH       = os.path.join('data', 'raw', 'dados_physchem_mf.xlsx')
 PROCESSED_DATA_PATH = os.path.join('data', 'processed', '{}')
+DROP_COLS_FILE      = os.path.join('helper', 'drop_cols.csv')
+
+cols_to_drop = [
+    row[0]
+    for row
+    in csv.reader(
+        open(DROP_COLS_FILE, 'r')
+    )
+]
+
 
 
 ################################################################################
