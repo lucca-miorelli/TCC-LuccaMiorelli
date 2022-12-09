@@ -61,32 +61,55 @@ print(f"{df.head()}\n")
 ##                              LIMPEZA DOS DADOS                             ##
 ################################################################################
 
-# VISÃO GERAL DOS DADOS BRUTOS
+#################################
+# VISÃO GERAL DOS DADOS BRUTOS  #
+#################################
 
 # número de colunas
 contar_colunas(df)
 
 # informação das colunas
-print(f"Informações das colunas:\n")
+# print(f"Informações das colunas:\n")
 # print(df.info())
 
 # descrever colunas numéricas
 
 
-# REMOVER COLUNAS NÃO UTILIZADAS
+####################################
+#  REMOVER COLUNAS NÃO UTILIZADAS  #
+####################################
+
 print("Removendo colunas desnecessárias...")
+
 df.drop(
     columns=cols_to_drop,
     inplace=True
 )
+
 contar_colunas(df)
 
-# RENOMEAR COLUNAS
+
+##############################
+#     RENOMEAR COLUNAS      #
+##############################
+
+# df.rename(
+#     columns=rename_cols,
+#     inplace=True
+# )
+# print(df.columns)
 
 
-# CORRIGIR TYPES DAS COLUNAS
-#
+#################################
+#  CORRIGIR TIPOS DAS COLUNAS   #
+#################################
+
 # tempo para minutos
 
 
-# PREENCHER VALORES NULOS
+
+#################################
+#    PREENCHER VALORES NULOS    #
+#################################
+
+# 
