@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import csv
 import codecs
+from datetime import datetime
 
 
 ################################################################################
@@ -56,7 +57,7 @@ df = pd.read_excel(
     skiprows=range(1, 4)
 )
 
-print(f"{df.head()}\n")
+# print(f"{df.head()}\n")
 
 
 ################################################################################
@@ -101,9 +102,32 @@ tempo_cols = [
     "ciclo_secagem",
 ]
 
-print(data[tempo_cols])
-data[tempo_cols] = data[tempo_cols].apply(pd.to_datetime, errors='coerce')
-print(type(data[tempo_cols]["tempo_carregamento_germinador"][0]))
+analisar_dtypes_colunas(data, "ciclo_secagem")
+
+data = limpar_colunas_tempo(data)
+    
+analisar_dtypes_colunas(data, "ciclo_secagem")
+
+
+
+
+
+
+# print(data['tempo_carregamento_germinador'].unique())
+# print(type(data['tempo_carregamento_germinador']))
+
+# data ['tempo_carregamento_germinador'] = pd.to_datetime(data['tempo_carregamento_germinador'].str.strip('[]'))
+# data['tempo_carregamento_germinador'] = data['tempo_carregamento_germinador'].apply(pd.to_datetime())
+# print(data['tempo_carregamento_germinador'].unique())
+
+
+
+# print(data[tempo_cols])
+# data[tempo_cols] = data[tempo_cols].apply(pd.Timestamp)
+# print(data[tempo_cols])
+
+# data[tempo_cols] = data[tempo_cols].apply(pd.to_datetime)
+# print(type(data[tempo_cols]["tempo_carregamento_germinador"][0]))
 
 # floats
 float_cols = [
@@ -115,8 +139,8 @@ float_cols = [
     "FAN",
 ]
 
-data[float_cols] = data[float_cols].apply(pd.to_numeric, errors='coerce')
-print(data.info())
+# data[float_cols] = data[float_cols].apply(pd.to_numeric, errors='coerce')
+# print(data.info())
 
 
 #################################
@@ -124,4 +148,4 @@ print(data.info())
 #################################
 
 # verificar quantidade de valores nulos por coluna
-print(data.isnull().sum() / len(data))
+# print(data.isnull().sum() / len(data))
