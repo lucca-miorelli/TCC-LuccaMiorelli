@@ -46,6 +46,70 @@ def contar_colunas(dataframe):
 
     return None
 
+def analisar_dtypes_colunas(dataframe, coluna):
+    
+    for col in [coluna]:
+        print("{}\t{}".format(col,dataframe[col].dtype))
+
+        values_type = {
+            type(value)
+            for value
+            in dataframe[col]
+        }
+
+        print("{}\n".format(values_type))
+
+        with open("helper/tmp_output.txt", "w") as f:
+
+            for value in dataframe[col]:
+                f.write("{}\t{}\n".format(value, type(value)))
+    
+    return None
+
+def limpar_colunas_tempo(dataframe):
+    
+    for index, row in dataframe.iterrows():
+    
+        # TEMPO_CARREGAMENTO_GERMINADOR
+        if isinstance(row["tempo_carregamento_germinador"], datetime):
+            dataframe.loc[index, "tempo_carregamento_germinador"] = datetime.strptime(row["tempo_carregamento_germinador"].time().strftime("%H:%M:%S"), "%H:%M:%S").time()
+
+        if isinstance(row["tempo_carregamento_germinador"], float):
+            dataframe.loc[index, "tempo_carregamento_germinador"] = np.nan
+
+
+        # PROBLEMA DE FORMATAÇÃO DA CÉLULAR DO EXCEL
+        if isinstance(row["tempo_germinacao"], datetime):
+            dataframe.loc[index, "tempo_germinacao"] = datetime.strptime(row["tempo_germinacao"].time().strftime("%H:%M:%S"), "%H:%M:%S").time()
+
+        if isinstance(row["tempo_germinacao"], float):
+            dataframe.loc[index, "tempo_germinacao"] = np.nan
+
+
+
+        # tempo_primeira_camada_secador
+        if isinstance(row["tempo_primeira_camada_secador"], datetime):
+            dataframe.loc[index, "tempo_primeira_camada_secador"] = datetime.strptime(row["tempo_primeira_camada_secador"].time().strftime("%H:%M:%S"), "%H:%M:%S").time()
+
+        if isinstance(row["tempo_primeira_camada_secador"], float):
+            dataframe.loc[index, "tempo_primeira_camada_secador"] = np.nan
+
+
+
+
+
+        # ciclo_secagem
+        if isinstance(row["ciclo_secagem"], datetime):
+            dataframe.loc[index, "ciclo_secagem"] = datetime.strptime(row["ciclo_secagem"].time().strftime("%H:%M:%S"), "%H:%M:%S").time()
+        
+        if isinstance(row["ciclo_secagem"], float):
+            dataframe.loc[index, "ciclo_secagem"] = np.nan
+
+        if isinstance(row["ciclo_secagem"], str) and row["ciclo_secagem"] == '-':
+            dataframe.loc[index, "ciclo_secagem"] = np.nan
+
+    return dataframe
+
 
 ################################################################################
 ##                              CARREGANDO DADOS                              ##
