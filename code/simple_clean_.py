@@ -66,6 +66,8 @@ def analisar_dtypes_colunas(dataframe, coluna):
     
     return None
 
+
+
 def limpar_colunas_tempo(dataframe):
     
     for index, row in dataframe.iterrows():
@@ -78,15 +80,6 @@ def limpar_colunas_tempo(dataframe):
             dataframe.loc[index, "tempo_carregamento_germinador"] = np.nan
 
 
-        # PROBLEMA DE FORMATAÇÃO DA CÉLULAR DO EXCEL
-        if isinstance(row["tempo_germinacao"], datetime):
-            dataframe.loc[index, "tempo_germinacao"] = datetime.strptime(row["tempo_germinacao"].time().strftime("%H:%M:%S"), "%H:%M:%S").time()
-
-        if isinstance(row["tempo_germinacao"], float):
-            dataframe.loc[index, "tempo_germinacao"] = np.nan
-
-
-
         # tempo_primeira_camada_secador
         if isinstance(row["tempo_primeira_camada_secador"], datetime):
             dataframe.loc[index, "tempo_primeira_camada_secador"] = datetime.strptime(row["tempo_primeira_camada_secador"].time().strftime("%H:%M:%S"), "%H:%M:%S").time()
@@ -95,7 +88,7 @@ def limpar_colunas_tempo(dataframe):
             dataframe.loc[index, "tempo_primeira_camada_secador"] = np.nan
 
 
-
+        dataframe["tempo_germinacao"].map(format_date)
 
 
         # ciclo_secagem
@@ -109,6 +102,51 @@ def limpar_colunas_tempo(dataframe):
             dataframe.loc[index, "ciclo_secagem"] = np.nan
 
     return dataframe
+
+
+
+# Função para formatar a coluna
+def format_date(value):
+    # Tenta
+    try:
+        # Separa a string pelo espaço em branco
+        # "1900-01-01 10:30:00" -> ["1900-01-01", "10:30:00"] 
+        date, time = str(pd.to_datetime(value)).split()
+    # Erro em caso de linha vazia
+    except ValueError:
+        # Retorna o tempo zero (mude para nulo ou outro valor para interpretar esse tipo de caso)
+        # Se linhas vazias não forem de interesse, limpe o df e pode tirar o try/except
+        return np.nan
+    
+    # Gera uma lista com cada elemento da data como um inteiro
+    # ["1900-01-01", "10:30:00"] -> [1900, 1, 1, 10, 30, 0]
+    formatted_time = \
+        list(
+            map(
+                lambda x: \
+                    # Converte todos os itens da lista em inteiros
+                    int(x), 
+                    # Separa os elementos do dia pelo "-" e hora pelo ":"
+                    date.split("-") + time.split(":")
+                )
+        )
+
+    # Retorno: Dia * 24 + hora, minuto
+    # [1900, 1, 1, 10, 30, 0] -> (1*24+10, 30) -> (34, 30)
+    return \
+        formatted_time[2]*24*60 + formatted_time[3]*60 + formatted_time[4]
+
+
+
+# df2 = \
+#     pd.DataFrame(
+#         # Converte coluna de tuplas em duas listas com as horas e minutos separados em duas colunas
+#         df["Tempo de Germinação"]\
+#             .map(format_date).tolist(), 
+#         # Nome das colunas
+#         columns=["Germinação - Horas", "Germinação - Minutos"]
+#     )
+
 
 
 ################################################################################
@@ -166,11 +204,13 @@ tempo_cols = [
     "ciclo_secagem",
 ]
 
-analisar_dtypes_colunas(data, "ciclo_secagem")
+# analisar_dtypes_colunas(data, "ciclo_secagem")
 
 data = limpar_colunas_tempo(data)
     
-analisar_dtypes_colunas(data, "ciclo_secagem")
+# analisar_dtypes_colunas(data, "ciclo_secagem")
+
+print()
 
 
 
