@@ -69,6 +69,10 @@ def analisar_dtypes_colunas(dataframe, coluna):
 
 
 def limpar_colunas_tempo(dataframe):
+
+    # Transformando tempo_germinacao em minutos e arrumando types
+    dataframe["tempo_germinacao"] = dataframe["tempo_germinacao"].map(format_date_germinacao)
+
     
     for index, row in dataframe.iterrows():
     
@@ -76,7 +80,7 @@ def limpar_colunas_tempo(dataframe):
         if isinstance(row["tempo_carregamento_germinador"], datetime):
             dataframe.loc[index, "tempo_carregamento_germinador"] = datetime.strptime(row["tempo_carregamento_germinador"].time().strftime("%H:%M:%S"), "%H:%M:%S").time()
 
-        if isinstance(row["tempo_carregamento_germinador"], float):
+        elif isinstance(row["tempo_carregamento_germinador"], float):
             dataframe.loc[index, "tempo_carregamento_germinador"] = np.nan
 
 
@@ -84,29 +88,30 @@ def limpar_colunas_tempo(dataframe):
         if isinstance(row["tempo_primeira_camada_secador"], datetime):
             dataframe.loc[index, "tempo_primeira_camada_secador"] = datetime.strptime(row["tempo_primeira_camada_secador"].time().strftime("%H:%M:%S"), "%H:%M:%S").time()
 
-        if isinstance(row["tempo_primeira_camada_secador"], float):
+        elif isinstance(row["tempo_primeira_camada_secador"], float):
             dataframe.loc[index, "tempo_primeira_camada_secador"] = np.nan
-
-
-        dataframe["tempo_germinacao"].map(format_date)
-
 
         # ciclo_secagem
         if isinstance(row["ciclo_secagem"], datetime):
             dataframe.loc[index, "ciclo_secagem"] = datetime.strptime(row["ciclo_secagem"].time().strftime("%H:%M:%S"), "%H:%M:%S").time()
         
-        if isinstance(row["ciclo_secagem"], float):
+        elif isinstance(row["ciclo_secagem"], float):
             dataframe.loc[index, "ciclo_secagem"] = np.nan
 
-        if isinstance(row["ciclo_secagem"], str) and row["ciclo_secagem"] == '-':
+        elif isinstance(row["ciclo_secagem"], str) and row["ciclo_secagem"] == '-':
             dataframe.loc[index, "ciclo_secagem"] = np.nan
+
+    dataframe["tempo_carregamento_germinador"] = dataframe["tempo_carregamento_germinador"].map(format_time)
+    dataframe["tempo_primeira_camada_secador"] = dataframe["tempo_primeira_camada_secador"].map(format_time)
+    dataframe["ciclo_secagem"] = dataframe["ciclo_secagem"].map(format_time)
+
 
     return dataframe
 
 
 
 # Função para formatar a coluna
-def format_date(value):
+def format_date_germinacao(value):
     # Tenta
     try:
         # Separa a string pelo espaço em branco
@@ -131,21 +136,43 @@ def format_date(value):
                 )
         )
 
-    # Retorno: Dia * 24 + hora, minuto
-    # [1900, 1, 1, 10, 30, 0] -> (1*24+10, 30) -> (34, 30)
+    # Retorno: (Dia * 24 * 60) + (hora * 60) + minuto
+    # [1900, 1, 1, 10, 30, 0] -> (1*24*60) + (10*60) + 30 -> 2070
     return \
         formatted_time[2]*24*60 + formatted_time[3]*60 + formatted_time[4]
 
+# Função para formatar a coluna
+def format_time(value):
+    # Tenta
+    try:
+        # Separa a string pelo : e transforma em lista
+        # "10:30:00" -> ["10", "30", "00"] 
+        time = str(value).split(":")
 
+        if len(time) <= 1:
+            return 0
+    # Erro em caso de linha vazia
+    except ValueError:
+        # Retorna o tempo zero (mude para nulo ou outro valor para interpretar esse tipo de caso)
+        # Se linhas vazias não forem de interesse, limpe o df e pode tirar o try/except
+        return 0
+    
+    # Gera uma lista com cada elemento da data como um inteiro
+    # ["10", "30", "00"]  -> [10, 30, 0]
+    formatted_time = \
+        list(
+            map(
+                lambda x: \
+                    # Converte todos os itens da lista em inteiros
+                    int(x),
+                    time
+                )
+        )
 
-# df2 = \
-#     pd.DataFrame(
-#         # Converte coluna de tuplas em duas listas com as horas e minutos separados em duas colunas
-#         df["Tempo de Germinação"]\
-#             .map(format_date).tolist(), 
-#         # Nome das colunas
-#         columns=["Germinação - Horas", "Germinação - Minutos"]
-#     )
+    # Retorno: hora * 60 + minuto
+    # [10, 30, 0] -> 10*60 + 30 -> 630
+    return \
+        formatted_time[0]*60 + formatted_time[1]
 
 
 
@@ -210,7 +237,9 @@ data = limpar_colunas_tempo(data)
     
 # analisar_dtypes_colunas(data, "ciclo_secagem")
 
-print()
+print(data.head())
+
+
 
 
 
